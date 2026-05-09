@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvNombreCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Producto"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvDetallesCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Categoría | Cantidad: 1"
+                android:textSize="14sp"
+                android:textColor="#757575" />
+
+            <TextView
+                android:id="@+id/tvPrecioCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#2E7D32" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnEliminarCart"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="#D32F2F"
+            android:contentDescription="Eliminar" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
