@@ -3,13 +3,14 @@ package activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class UserActivity extends AppCompatActivity {
     private ProductoAdapter adapter;
     private List<Producto> listaProductos = new ArrayList<>();
     private TextView tvBienvenida;
-    private ImageButton btnVerCarrito;
+    private BottomNavigationView bottomNav;
     private int idUsuario;
 
     @Override
@@ -42,17 +43,39 @@ public class UserActivity extends AppCompatActivity {
 
         tvBienvenida = findViewById(R.id.tvBienvenidaUsuario);
         rvProductos = findViewById(R.id.rvProductos);
-        btnVerCarrito = findViewById(R.id.btnVerCarrito);
+        bottomNav = findViewById(R.id.bottom_navigation);
 
         String nombre = getIntent().getStringExtra("nombre");
-        tvBienvenida.setText("Hola, " + nombre);
+        if (nombre != null) {
+            tvBienvenida.setText("Hola, " + nombre);
+        }
 
         setupRecyclerView();
         cargarProductos();
+        setupBottomNav();
+    }
 
-        btnVerCarrito.setOnClickListener(v -> {
-            Intent intent = new Intent(UserActivity.this, CartActivity.class);
-            startActivity(intent);
+    private void setupBottomNav() {
+        bottomNav.setSelectedItemId(R.id.nav_products);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_orders) {
+                startActivity(new Intent(this, UserOrdersActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (id == R.id.nav_cart) {
+                startActivity(new Intent(this, CartActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            }
+            return id == R.id.nav_products;
         });
     }
 
@@ -76,46 +99,32 @@ public class UserActivity extends AppCompatActivity {
 
     private void cargarProductos() {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        Call<List<Producto>> call = apiService.getProductos();
-
-        call.enqueue(new Callback<List<Producto>>() {
+        apiService.getProductos().enqueue(new Callback<List<Producto>>() {
             @Override
             public void onResponse(Call<List<Producto>> call, Response<List<Producto>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     listaProductos.clear();
                     listaProductos.addAll(response.body());
                     adapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(UserActivity.this, "Error al cargar productos", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Producto>> call, Throwable t) {
                 Log.e("API_ERROR", t.getMessage());
-                Toast.makeText(UserActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void agregarAlCarrito(Producto producto) {
-        if (idUsuario == 0) {
-            Toast.makeText(this, "Error: Usuario no identificado", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // Cantidad por defecto 1 desde la lista general
         CarritoRequest request = new CarritoRequest(idUsuario, producto.getCategoria(), producto.getId(), 1);
 
-        Call<Void> call = apiService.agregarAlCarrito(request);
-        call.enqueue(new Callback<Void>() {
+        apiService.agregarAlCarrito(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(UserActivity.this, producto.getNombre() + " agregado al carrito", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(UserActivity.this, "Error al agregar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UserActivity.this, "Agregado al carrito", Toast.LENGTH_SHORT).show();
                 }
             }
 

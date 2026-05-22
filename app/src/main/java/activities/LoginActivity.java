@@ -28,6 +28,16 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Verificar sesión existente
+        int idSaved = getSharedPreferences("RentaPrefs", MODE_PRIVATE).getInt("id_usuario", 0);
+        if (idSaved != 0) {
+            String nombreSaved = getSharedPreferences("RentaPrefs", MODE_PRIVATE).getString("nombre_usuario", "");
+            int rolSaved = getSharedPreferences("RentaPrefs", MODE_PRIVATE).getInt("id_rol", 3);
+            redirigirConDatos(idSaved, nombreSaved, rolSaved);
+            return;
+        }
+
         setContentView(R.layout.activity_login);
 
         etEmail = findViewById(R.id.etEmail);
@@ -64,10 +74,12 @@ public class LoginActivity extends AppCompatActivity {
                     Usuario usuario = response.body();
                     Toast.makeText(LoginActivity.this, "Bienvenido " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
                     
-                    // Guardar ID del usuario para el carrito
+                    // Guardar sesión persistente
                     getSharedPreferences("RentaPrefs", MODE_PRIVATE)
                         .edit()
                         .putInt("id_usuario", usuario.getId_usuario())
+                        .putString("nombre_usuario", usuario.getNombre())
+                        .putInt("id_rol", usuario.getId_rol())
                         .apply();
 
                     redirigirSegunRol(usuario);
@@ -85,17 +97,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void redirigirSegunRol(Usuario usuario) {
-        Intent intent;
-        int idRol = usuario.getId_rol();
+        redirigirConDatos(usuario.getId_usuario(), usuario.getNombre(), usuario.getId_rol());
+    }
 
-        // Según tu SQL: 1 = admin, 3 = cliente
+    private void redirigirConDatos(int idUsuario, String nombre, int idRol) {
+        Intent intent;
         if (idRol == 1) {
             intent = new Intent(this, AdminActivity.class);
         } else {
             intent = new Intent(this, UserActivity.class);
         }
-
-        intent.putExtra("nombre", usuario.getNombre());
+        intent.putExtra("nombre", nombre);
         startActivity(intent);
         finish();
     }

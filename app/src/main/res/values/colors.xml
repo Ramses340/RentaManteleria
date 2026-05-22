@@ -3,4 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red_error">#D32F2F</color>
+
+    <!-- Paleta Doña Maya -->
+    <color name="purple_primary">#8E24AA</color> <!-- Púrpura fuerte del logo -->
+    <color name="purple_light">#E1BEE7</color> <!-- Lila suave del fondo -->
+    <color name="purple_dark">#5E007A</color> <!-- Púrpura oscuro para textos -->
+    <color name="accent_gold">#FFD700</color> <!-- Un toque dorado opcional para elegancia -->
+    <color name="gray_bg">#FDF7FF</color> <!-- Fondo muy levemente teñido de lila -->
+    <color name="text_secondary">#757575</color>
 </resources>
